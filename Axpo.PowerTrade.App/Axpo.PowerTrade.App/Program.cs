@@ -1,18 +1,25 @@
-﻿
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Axpo;
+using Axpo.PowerTrading.Application.Service;
+using Axpo.PowerTrading.Application.Service.Interface;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System.Security.Cryptography.X509Certificates;
 
-class Program
+internal class Program
 {
-    static void Main(string[] args)
-    {
-        Program program = new Program();
+    private static async Task Main(string[] args)
+    {        
+        IHost _host = Host.CreateDefaultBuilder().ConfigureServices(
+        services =>
+        {
+            services.AddSingleton<IExportFileService, ExportFileService>();
+            services.AddSingleton<IPowerTradeService, PowerTradeService>();
+            services.AddSingleton<IPowerService, PowerService>();
+        }).Build();
 
-        Console.WriteLine("Press any key to exit...");
-        Console.ReadKey();
+        var exportFileService = _host.Services.GetRequiredService<IExportFileService>();
+        var tradeService = _host.Services.GetRequiredService<IPowerTradeService>();
+
+        var res = await exportFileService.ExportAsync(DateTime.Now);
     }
-
-
 }
-
