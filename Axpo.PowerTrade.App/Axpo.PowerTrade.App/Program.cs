@@ -3,7 +3,6 @@ using Axpo.PowerTrading.Application.Service;
 using Axpo.PowerTrading.Application.Service.Interface;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Security.Cryptography.X509Certificates;
 
 internal class Program
 {
@@ -15,11 +14,16 @@ internal class Program
             services.AddSingleton<IExportFileService, ExportFileService>();
             services.AddSingleton<IPowerTradeService, PowerTradeService>();
             services.AddSingleton<IPowerService, PowerService>();
+            services.AddScoped<IProcessingService, ProcessingService>();
+            services.AddHostedService<ConsumerService>();
         }).Build();
 
         var exportFileService = _host.Services.GetRequiredService<IExportFileService>();
         var tradeService = _host.Services.GetRequiredService<IPowerTradeService>();
+        var processingService = _host.Services.GetRequiredService<IProcessingService>();
+        var stoppingToken = new CancellationToken();
 
-        var res = await exportFileService.ExportAsync(DateTime.Now);
+        await processingService.Process(stoppingToken);
+
     }
 }

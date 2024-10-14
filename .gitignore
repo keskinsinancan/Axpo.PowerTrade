@@ -11,3 +11,4 @@
 *.pdb
 /Axpo.PowerTrade.App/Axpo.PowerTrade.Application/bin/Debug/net8.0
 /Axpo.PowerTrade.App/Axpo.PowerTrade.Application/obj
+/Axpo.PowerTrade.App/.vs/Axpo.PowerTrading
