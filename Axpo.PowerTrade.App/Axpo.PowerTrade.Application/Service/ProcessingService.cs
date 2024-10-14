@@ -1,10 +1,5 @@
 ﻿using Axpo.PowerTrading.Application.Service.Interface;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Axpo.PowerTrading.Application.Service
 {
@@ -18,7 +13,6 @@ namespace Axpo.PowerTrading.Application.Service
 		{
 			_logger = logger;
 			_exportFileService = exportFileService;
-			_exportFileService = exportFileService;
 		}
 
 		public async Task Process(CancellationToken stoppingToken)
@@ -26,10 +20,11 @@ namespace Axpo.PowerTrading.Application.Service
 			while (!stoppingToken.IsCancellationRequested)
 			{
 				executionCount++;
-				_logger.LogInformation(
-					"Processing Service is working. Count: {Count}", executionCount);
+				_logger.LogInformation("Processing Service is working. Count: {Count}", executionCount);
 
 				var result = await _exportFileService.ExportAsync(DateTime.Now);
+				//todo : retry mechanism 
+
 
 				await Task.Delay(10000, stoppingToken);
 			}

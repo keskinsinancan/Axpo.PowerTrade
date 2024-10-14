@@ -9,14 +9,14 @@ internal class Program
     private static async Task Main(string[] args)
     {        
         IHost _host = Host.CreateDefaultBuilder().ConfigureServices(
-        services =>
-        {
-            services.AddSingleton<IExportFileService, ExportFileService>();
-            services.AddSingleton<IPowerTradeService, PowerTradeService>();
-            services.AddSingleton<IPowerService, PowerService>();
-            services.AddScoped<IProcessingService, ProcessingService>();
-            services.AddHostedService<ConsumerService>();
-        }).Build();
+            services =>
+            {
+                services.AddSingleton<IExportFileService, ExportFileService>();
+                services.AddSingleton<IPowerTradeService, PowerTradeService>();
+                services.AddSingleton<IPowerService, PowerService>();
+                services.AddScoped<IProcessingService, ProcessingService>();
+                services.AddHostedService<ConsumerService>();
+            }).Build();
 
         var exportFileService = _host.Services.GetRequiredService<IExportFileService>();
         var tradeService = _host.Services.GetRequiredService<IPowerTradeService>();
