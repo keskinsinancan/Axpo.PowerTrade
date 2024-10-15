@@ -20,14 +20,14 @@ namespace Axpo.PowerTrading.Application.Service
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
-			_logger.LogInformation("Consumer Service Service running.");
+			_logger.LogInformation("Consumer Service running.");
 
 			await DoWork(stoppingToken);
 		}
 
 		private async Task DoWork(CancellationToken stoppingToken)
 		{
-			_logger.LogInformation("Consumer Service Service is working.");
+			_logger.LogInformation("Consumer Service is working.");
 
 			using (var scope = Services.CreateScope())
 			{

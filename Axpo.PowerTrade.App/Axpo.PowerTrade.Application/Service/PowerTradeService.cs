@@ -18,38 +18,25 @@ namespace Axpo.PowerTrading.Application.Service
             return _powerService.GetTrades(date);
         }
 
-        public async Task<List<AggregatedPeriod>> GetPowerTradesAsync(DateTime date)
+        public async Task<List<AggregatePeriod>> GetPowerTradesAsync(DateTime date)
         {
             var trades = await _powerService.GetTradesAsync(date);
-            var aggTrades = AggregateTrades(trades);
-            return aggTrades;
+            return AggregateTrades(trades);
         }
 
-        private List<AggregatedPeriod> AggregateTrades(IEnumerable<PowerTrade> trades)
+        private List<AggregatePeriod> AggregateTrades(IEnumerable<PowerTrade> trades)
         {
-            var aggTrades = new List<AggregatedPeriod>();
-
-            var aggregatedVolumes = trades
-                .SelectMany(trade => trade.Periods)
-                .GroupBy(period => period.Period)
-                .Select(group => new
-                {
-                    Period = group.Key,
-                    TotalVolume = group.Sum(p => p.Volume)
-                })
-                .OrderBy(result => result.Period)
-                .ToList();
-
-            aggTrades.AddRange(
-                aggregatedVolumes
-                .Select(vol => new AggregatedPeriod
-                {
-                    Period = vol.Period,
-                    Volume = vol.TotalVolume
-                })
-             );
-
-            return aggTrades;
+            return
+                trades
+                    .SelectMany(trade => trade.Periods)
+                    .GroupBy(period => period.Period)
+                    .Select(group => new AggregatePeriod
+                    {
+                        Period = group.Key,
+                        Volume = group.Sum(p => p.Volume)
+                    })
+                    .OrderBy(result => result.Period)
+                    .ToList();
         }
     }
 }

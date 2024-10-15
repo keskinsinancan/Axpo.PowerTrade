@@ -19,13 +19,18 @@ namespace Axpo.PowerTrading.Application.Service
 		{
 			while (!stoppingToken.IsCancellationRequested)
 			{
+				var result = false;
+				var retryExportCount = 0;
 				executionCount++;
 				_logger.LogInformation("Processing Service is working. Count: {Count}", executionCount);
 
-				var result = await _exportFileService.ExportAsync(DateTime.Now);
-				//todo : retry mechanism 
-
-
+				while (!result)
+				{
+					retryExportCount++;
+					_logger.LogInformation($"Exporting csv attemp number {retryExportCount} ");
+                    result = await _exportFileService.ExportToCsvAsync(DateTime.Now);
+                }
+				
 				await Task.Delay(10000, stoppingToken);
 			}
 		}

@@ -5,6 +5,6 @@ namespace Axpo.PowerTrading.Application.Service.Interface
     public interface IPowerTradeService
     {
         IEnumerable<PowerTrade> GetPowerTrades(DateTime date);
-        Task<List<AggregatedPeriod>> GetPowerTradesAsync(DateTime date);
+        Task<List<AggregatePeriod>> GetPowerTradesAsync(DateTime date);
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Axpo.PowerTrading.Application.Models
 {
-    public class AggregatedPeriod
+    public class AggregatePeriod
     {
         public int Period { get; set; }
         public double Volume { get; set; }

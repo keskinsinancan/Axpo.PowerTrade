@@ -2,6 +2,6 @@
 {
     public interface IExportFileService
     {
-        Task<bool> ExportAsync(DateTime date);
+        Task<bool> ExportToCsvAsync(DateTime date);
     }
 }
