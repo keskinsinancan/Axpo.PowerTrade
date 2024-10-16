@@ -1,84 +1,70 @@
-﻿using Axpo.PowerTrading.Application.Models;
-using Axpo.PowerTrading.Application.Service.Interface;
+﻿using Axpo.PowerTrading.Application.Service.Interface;
 using Axpo.PowerTrading.Application.Settings;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text;
 using Axpo.PowerTrading.Application.Constants;
 
-namespace Axpo.PowerTrading.Application.Service
+public class ExportFileService : IExportFileService
 {
-	public class ExportFileService : IExportFileService
-	{
-		private readonly ILogger<ExportFileService> _logger;
-		private readonly IPowerTradeService _powerTradeService;
-		private readonly ExportOptions _options;
+    private readonly ILogger<ExportFileService> _logger;
+    private readonly IPowerPositionService _powerTradeService;
+    private readonly IFileService _fileService;
+    private readonly IDateTimeProviderService _dateTimeProviderService;
+    private readonly ExportOptions _options;
 
-		public ExportFileService(
-			ILogger<ExportFileService> logger,
-			IPowerTradeService powerTradeService,
-			IOptions<ExportOptions> options)
-		{
-			_logger = logger;
-			_powerTradeService = powerTradeService;
-			_options = options.Value;
-		}
-		public async Task<bool> ExportToCsvAsync(DateTime date)
-		{
-			try
-			{
-				var dayEhead = date.AddDays(1);
-				_logger.LogInformation($"Attemping retrieve data for the day {dayEhead.ToShortDateString()}");
+    public ExportFileService(
+        ILogger<ExportFileService> logger,
+        IPowerPositionService powerPositionService,
+        IFileService fileService,
+        IDateTimeProviderService dateTimeProviderService,
+        IOptions<ExportOptions> options)
+    {
+        _logger = logger;
+        _powerTradeService = powerPositionService;
+        _fileService = fileService;
+        _dateTimeProviderService = dateTimeProviderService;
+        _options = options.Value;
+    }
 
-				var aggregatedTrades = await _powerTradeService.GetPowerTradesAsync(dayEhead);
+    public async Task<bool> ExportToCsvAsync(DateTime date)
+    {
+        var dayEhead = date.AddDays(1);
+        _logger.LogInformation($"Attempting to retrieve data for the day {dayEhead.ToShortDateString()}");
 
-				var path = BuildExportPath(dayEhead);
+        try
+        {
+            var aggregatedTrades = await _powerTradeService.GetPowerPositionsAsync(dayEhead);
+            var path = BuildExportPath(dayEhead);
+            await _fileService.ExportToCsv(aggregatedTrades, path);
+            _logger.LogInformation($"File successfully exported to {path} for the date {dayEhead.ToShortDateString()}");
+            return true;
+        }
+        catch (IOException ex)
+        {
+            _logger.LogError(ex, $"I/O error during file export for {dayEhead.ToShortDateString()}: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"An error occurred during file export for {dayEhead.ToShortDateString()}: {ex.Message}");
+        }
 
-				await ExportToCsv(aggregatedTrades, path);
-				if (Path.Exists(path))
-				{
-					_logger.LogInformation($"File trades are exported successfully for the date {dayEhead.Date}");
-					return true;
-				}
-				_logger.LogInformation("File export was not successfull");
-				return false;
-			}
-			catch (Exception ex)
-			{
-				_logger.LogInformation($"Failed to export {ex}");
-				return false;
-			}
-		}
+        _logger.LogWarning($"File export failed for {dayEhead.ToShortDateString()}.");
+        return false;
+    }
 
-		private async Task ExportToCsv(List<AggregatePeriod> periods, string path)
-		{
-			var csvContent = new StringBuilder();
-			csvContent.AppendLine($"{FileExportConstants.Datetime},{FileExportConstants.Volume}");
+    private string BuildExportPath(DateTime date)
+    {
+        _fileService.CreateDirectory(_options.ExportFolderPath);
 
-			foreach (var period in periods)
-			{
-				csvContent.AppendLine($"{period.Period},{period.Volume}");
-			}
-
-			using (StreamWriter writer = new StreamWriter(path, false))
-			{
-				await writer.WriteAsync(csvContent.ToString());
-			}
-		}
-
-		private string BuildExportPath(DateTime date)
-		{
-			Directory.CreateDirectory(_options.ExportFolderPath);
-
-			var sb = new StringBuilder();
-			sb.Append(_options.ExportFolderPath);
-			sb.Append(FileExportConstants.PowerPosition);
-			sb.Append('_');
-			sb.Append(date.ToString("yyyyMMdd"));
-			sb.Append('_');
-			sb.Append(DateTime.UtcNow.ToString("yyyyMMddHHmm"));
-			sb.Append(".csv");
-			return sb.ToString();
-		}
-	}
+        var sb = new StringBuilder();
+        sb.Append(_options.ExportFolderPath);
+        sb.Append(FileExportConstants.PowerPosition);
+        sb.Append('_');
+        sb.Append(date.ToString("yyyyMMdd"));
+        sb.Append('_');
+        sb.Append(_dateTimeProviderService.UtcNow().ToString("yyyyMMddHHmm"));
+        sb.Append(".csv");
+        return sb.ToString();
+    }
 }

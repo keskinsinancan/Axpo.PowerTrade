@@ -6,33 +6,29 @@ using System.Text;
 
 namespace Axpo.PowerTrading.Application.Service
 {
-	public class PowerTradeService : IPowerTradeService
+	public class PowerPositionService : IPowerPositionService
 	{
-		private readonly ILogger<PowerTradeService> _logger;
+		private readonly ILogger<PowerPositionService> _logger;
 		private readonly IPowerService _powerService;
-		public PowerTradeService(ILogger<PowerTradeService> logger, IPowerService powerService)
+		public PowerPositionService(ILogger<PowerPositionService> logger, IPowerService powerService)
 		{
 			_logger = logger;
 			_powerService = powerService;
 		}
-		public IEnumerable<PowerTrade> GetPowerTrades(DateTime date)
-		{
-			return _powerService.GetTrades(date);
-		}
 
-		public async Task<List<AggregatePeriod>> GetPowerTradesAsync(DateTime date)
+		public async Task<List<PowerPosition>> GetPowerPositionsAsync(DateTime date)
 		{
 			var trades = await _powerService.GetTradesAsync(date);
 			return AggregateTrades(trades, date);
 		}
 
-		private List<AggregatePeriod> AggregateTrades(IEnumerable<PowerTrade> trades, DateTime date)
+		private List<PowerPosition> AggregateTrades(IEnumerable<PowerTrade> trades, DateTime date)
 		{
 			return
 				trades
 					.SelectMany(trade => trade.Periods)
 					.GroupBy(period => period.Period)
-					.Select(group => new AggregatePeriod
+					.Select(group => new PowerPosition
 					{
 						Period = FormatPeriod(group.Key, date),
 						Volume = group.Sum(p => p.Volume)

@@ -28,8 +28,10 @@ internal class Program
            {
                services.Configure<ExportOptions>(context.Configuration.GetSection("ExportOptions"));
                services.AddSingleton<IExportFileService, ExportFileService>();
-               services.AddSingleton<IPowerTradeService, PowerTradeService>();
+               services.AddSingleton<IPowerPositionService, PowerPositionService>();
                services.AddSingleton<IPowerService, PowerService>();
+               services.AddSingleton<IFileService, FileService>();
+               services.AddSingleton<IDateTimeProviderService, DateTimeProviderService>();
                services.AddScoped<IProcessingService, ProcessingService>();
                services.AddHostedService<ConsumerService>();
            });

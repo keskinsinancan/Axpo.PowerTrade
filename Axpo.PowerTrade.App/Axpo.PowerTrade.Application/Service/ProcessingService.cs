@@ -29,7 +29,7 @@ namespace Axpo.PowerTrading.Application.Service
 				var result = false;
 				var retryExportCount = 0;
 				executionCount++;
-				_logger.LogInformation("Processing Service is working. Count: {Count}", executionCount);
+				_logger.LogInformation($"Processing Service is working. Count: {executionCount}");
 
 				while (!result)
 				{
