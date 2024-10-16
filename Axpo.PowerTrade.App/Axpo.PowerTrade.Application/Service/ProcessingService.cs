@@ -1,5 +1,7 @@
 ﻿using Axpo.PowerTrading.Application.Service.Interface;
+using Axpo.PowerTrading.Application.Settings;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Axpo.PowerTrading.Application.Service
 {
@@ -8,11 +10,16 @@ namespace Axpo.PowerTrading.Application.Service
 		private int executionCount = 0;
 		private readonly ILogger _logger;
 		private readonly IExportFileService _exportFileService;
+		private readonly ExportOptions _options;
 
-		public ProcessingService(ILogger<ProcessingService> logger, IExportFileService exportFileService)
+		public ProcessingService(
+			ILogger<ProcessingService> logger, 
+			IExportFileService exportFileService,
+			IOptions<ExportOptions> options)
 		{
 			_logger = logger;
 			_exportFileService = exportFileService;
+			_options = options.Value;
 		}
 
 		public async Task Process(CancellationToken stoppingToken)
@@ -28,10 +35,10 @@ namespace Axpo.PowerTrading.Application.Service
 				{
 					retryExportCount++;
 					_logger.LogInformation($"Exporting csv attemp number {retryExportCount} ");
-                    result = await _exportFileService.ExportToCsvAsync(DateTime.Now);
+                    result = await _exportFileService.ExportToCsvAsync(DateTime.Today);
                 }
 				
-				await Task.Delay(10000, stoppingToken);
+				await Task.Delay(_options.ExportIntervalInMiliseconds, stoppingToken);
 			}
 		}
 	}

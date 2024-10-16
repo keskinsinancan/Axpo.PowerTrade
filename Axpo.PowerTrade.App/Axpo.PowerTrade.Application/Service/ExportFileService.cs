@@ -4,70 +4,80 @@ using Axpo.PowerTrading.Application.Settings;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text;
+using Axpo.PowerTrading.Application.Constants;
 
 namespace Axpo.PowerTrading.Application.Service
 {
-    public class ExportFileService : IExportFileService
-    {
-        private readonly ILogger<ExportFileService> _logger;
-        private readonly IPowerTradeService _powerTradeService;
-        private readonly ExportOptions _options;
+	public class ExportFileService : IExportFileService
+	{
+		private readonly ILogger<ExportFileService> _logger;
+		private readonly IPowerTradeService _powerTradeService;
+		private readonly ExportOptions _options;
 
-        public ExportFileService(
-            ILogger<ExportFileService> logger, 
-            IPowerTradeService powerTradeService,
-            IOptions<ExportOptions> options)
-        {
-            _logger = logger;
-            _powerTradeService = powerTradeService;
-            _options = options.Value;
-        }
-        public async Task<bool> ExportToCsvAsync(DateTime date)
-        {
-            _logger.LogInformation($"Reading options Name :{_options.Option1} {_options.Option2}");
+		public ExportFileService(
+			ILogger<ExportFileService> logger,
+			IPowerTradeService powerTradeService,
+			IOptions<ExportOptions> options)
+		{
+			_logger = logger;
+			_powerTradeService = powerTradeService;
+			_options = options.Value;
+		}
+		public async Task<bool> ExportToCsvAsync(DateTime date)
+		{
+			try
+			{
+				var dayEhead = date.AddDays(1);
+				_logger.LogInformation($"Attemping retrieve data for the day {dayEhead.ToShortDateString()}");
 
-            try
-            {
-                var dayEhead = CalculateDayEhead(date);
-                _logger.LogInformation($"Attemping retrieve data for the day {date.Date}");
-                var aggregatedTrades = await _powerTradeService.GetPowerTradesAsync(dayEhead);
-                var path = BuildPath(date);
-                await ExportToCsv(aggregatedTrades, path);
-                if (Path.Exists(path))
-                {
-                    _logger.LogInformation($"File trades are exported successfully for the date {date.Date}");
-                    return true;
-                }
-                _logger.LogInformation("File export was not successfull");
-                return false;
-            }
-            catch (Exception ex) {
-                _logger.LogInformation($"Failed to export {ex}");
-                return false;
-            }
-        }
+				var aggregatedTrades = await _powerTradeService.GetPowerTradesAsync(dayEhead);
 
-        private DateTime CalculateDayEhead(DateTime date) => date.AddDays(1);
+				var path = BuildExportPath(dayEhead);
 
-        private async Task ExportToCsv(List<AggregatePeriod> periods, string path)
-        {
-            var csvContent = new StringBuilder();
-            csvContent.AppendLine("Period,Volume");
+				await ExportToCsv(aggregatedTrades, path);
+				if (Path.Exists(path))
+				{
+					_logger.LogInformation($"File trades are exported successfully for the date {dayEhead.Date}");
+					return true;
+				}
+				_logger.LogInformation("File export was not successfull");
+				return false;
+			}
+			catch (Exception ex)
+			{
+				_logger.LogInformation($"Failed to export {ex}");
+				return false;
+			}
+		}
 
-            foreach (var period in periods)
-            {
-                csvContent.AppendLine($"{period.Period},{period.Volume}");
-            }
+		private async Task ExportToCsv(List<AggregatePeriod> periods, string path)
+		{
+			var csvContent = new StringBuilder();
+			csvContent.AppendLine("Period,Volume");
 
-            using (StreamWriter writer = new StreamWriter(path, false))
-            {
-                await writer.WriteAsync(csvContent.ToString());
-            }
-        }
+			foreach (var period in periods)
+			{
+				csvContent.AppendLine($"{period.Period},{period.Volume}");
+			}
 
-        private string BuildPath(DateTime date)
-        {
-            return "C:/Users/keski/Desktop/PowerPositions/output.csv";
-        }
-    }
+			using (StreamWriter writer = new StreamWriter(path, false))
+			{
+				await writer.WriteAsync(csvContent.ToString());
+			}
+		}
+
+		private string BuildExportPath(DateTime date)
+		{
+			Directory.CreateDirectory(_options.ExportFolderPath);
+
+			var sb = new StringBuilder();
+			sb.Append(_options.ExportFolderPath);
+			sb.Append(FileExportConstants.PowerPosition);
+			sb.Append('_');
+			sb.Append(date.ToString("yyyyMMdd"));
+			sb.Append('_');
+			sb.Append(DateTime.UtcNow.ToString("yyyyMMddhmm"));
+			return sb.ToString();
+		}
+	}
 }

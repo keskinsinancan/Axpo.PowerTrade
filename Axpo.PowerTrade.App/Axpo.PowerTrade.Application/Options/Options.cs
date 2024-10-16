@@ -2,7 +2,7 @@
 {
     public class ExportOptions
     {
-        public string Option1 { get; set; }
-        public int Option2 { get; set; }
+        public string? ExportFolderPath { get; set; }
+        public int ExportIntervalInMiliseconds { get; set; }
     }
 }
