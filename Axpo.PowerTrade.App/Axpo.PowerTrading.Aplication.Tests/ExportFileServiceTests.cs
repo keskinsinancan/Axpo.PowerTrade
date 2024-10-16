@@ -1,14 +1,11 @@
-using System;
-using System.Threading.Tasks;
 using Moq;
-using Xunit;
 using Microsoft.Extensions.Logging;
 using Axpo.PowerTrading.Application.Models;
 using Axpo.PowerTrading.Application.Service.Interface;
 using Microsoft.Extensions.Options;
 using Axpo.PowerTrading.Application.Settings;
 
-namespace Axpo.PowerTrading.Aplication.Tests
+namespace Axpo.PowerTrading.Application.Tests
 {
     public class ExportFileServiceTests
     {

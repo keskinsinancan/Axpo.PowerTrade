@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Axpo.PowerTrading.Application.Settings;
 
 
-internal class Program
+public class Program
 {
     private static async Task Main(string[] args)
     {

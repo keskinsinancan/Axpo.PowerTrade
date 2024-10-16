@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Axpo.PowerTrading.Applicati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Axpo.PowerTrading.UI", "Axpo.PowerTrade.UI\Axpo.PowerTrading.UI.csproj", "{5B21B353-111B-487E-BEF2-7235FD47C211}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Axpo.PowerTrading.Aplication.Tests", "Axpo.PowerTrading.Aplication.Tests\Axpo.PowerTrading.Aplication.Tests.csproj", "{49A4A174-3F0B-4F35-8DFC-CC76CDF65DB2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Axpo.PowerTrading.Application.Tests", "Axpo.PowerTrading.Aplication.Tests\Axpo.PowerTrading.Application.Tests.csproj", "{49A4A174-3F0B-4F35-8DFC-CC76CDF65DB2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{DE07A59D-3A4C-46CE-BCEB-44D3044B62E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,6 +32,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{49A4A174-3F0B-4F35-8DFC-CC76CDF65DB2} = {DE07A59D-3A4C-46CE-BCEB-44D3044B62E9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {50F500AC-F912-4982-9CAB-ABC4BFF4FEEA}
