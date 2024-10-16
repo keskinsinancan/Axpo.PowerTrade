@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <Reference Include="PowerService">
-      <HintPath>..\Axpo.PowerTrade.App\External\PowerService.dll</HintPath>
+      <HintPath>..\PowerService.dll</HintPath>
     </Reference>
   </ItemGroup>
 
