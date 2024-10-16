@@ -53,7 +53,7 @@ namespace Axpo.PowerTrading.Application.Service
 		private async Task ExportToCsv(List<AggregatePeriod> periods, string path)
 		{
 			var csvContent = new StringBuilder();
-			csvContent.AppendLine("Period,Volume");
+			csvContent.AppendLine($"{FileExportConstants.Datetime},{FileExportConstants.Volume}");
 
 			foreach (var period in periods)
 			{
@@ -76,7 +76,8 @@ namespace Axpo.PowerTrading.Application.Service
 			sb.Append('_');
 			sb.Append(date.ToString("yyyyMMdd"));
 			sb.Append('_');
-			sb.Append(DateTime.UtcNow.ToString("yyyyMMddhmm"));
+			sb.Append(DateTime.UtcNow.ToString("yyyyMMddHHmm"));
+			sb.Append(".csv");
 			return sb.ToString();
 		}
 	}

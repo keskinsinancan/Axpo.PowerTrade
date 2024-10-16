@@ -35,7 +35,7 @@ namespace Axpo.PowerTrading.Application.Service
 				{
 					retryExportCount++;
 					_logger.LogInformation($"Exporting csv attemp number {retryExportCount} ");
-                    result = await _exportFileService.ExportToCsvAsync(DateTime.Today);
+                    result = await _exportFileService.ExportToCsvAsync(DateTime.UtcNow);
                 }
 				
 				await Task.Delay(_options.ExportIntervalInMiliseconds, stoppingToken);
