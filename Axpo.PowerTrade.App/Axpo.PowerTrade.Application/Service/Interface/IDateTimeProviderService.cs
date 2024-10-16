@@ -2,6 +2,8 @@
 {
     public interface IDateTimeProviderService
     {
-        DateTime UtcNow();
+        DateTime UtcNowWithTimeZone();
+        string FormatDateTimePeriodToIso8601(int period, DateTime date);
+        DateTime GetUtcDateTimeWithTimeZone(DateTime date);
     }
 }

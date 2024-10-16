@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
 using Axpo.PowerTrading.Application.Service.Interface;
 
-
 namespace Axpo.PowerTrading.Application.Service
 {
 	public class ConsumerService : BackgroundService

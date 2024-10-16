@@ -34,9 +34,16 @@ public class ExportFileService : IExportFileService
 
         try
         {
-            var aggregatedTrades = await _powerTradeService.GetPowerPositionsAsync(dayEhead);
+            var powerPositions = await _powerTradeService.GetPowerPositionsAsync(dayEhead);
+            
+            if (!powerPositions.Any())
+            {
+                _logger.LogError($"Positions could not be retrieved for the date {dayEhead.ToShortDateString()}");
+                return false;
+            }
+
             var path = BuildExportPath(dayEhead);
-            await _fileService.ExportToCsv(aggregatedTrades, path);
+            await _fileService.ExportToCsv(powerPositions, path);
             _logger.LogInformation($"File successfully exported to {path} for the date {dayEhead.ToShortDateString()}");
             return true;
         }
@@ -63,7 +70,7 @@ public class ExportFileService : IExportFileService
         sb.Append('_');
         sb.Append(date.ToString("yyyyMMdd"));
         sb.Append('_');
-        sb.Append(_dateTimeProviderService.UtcNow().ToString("yyyyMMddHHmm"));
+        sb.Append(_dateTimeProviderService.UtcNowWithTimeZone().ToString("yyyyMMddHHmm"));
         sb.Append(".csv");
         return sb.ToString();
     }

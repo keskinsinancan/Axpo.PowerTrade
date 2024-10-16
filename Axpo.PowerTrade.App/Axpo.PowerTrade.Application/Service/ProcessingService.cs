@@ -10,15 +10,18 @@ namespace Axpo.PowerTrading.Application.Service
 		private int executionCount = 0;
 		private readonly ILogger _logger;
 		private readonly IExportFileService _exportFileService;
+		private readonly IDateTimeProviderService _dateTimeProviderService;
 		private readonly ExportOptions _options;
 
 		public ProcessingService(
 			ILogger<ProcessingService> logger, 
 			IExportFileService exportFileService,
+			IDateTimeProviderService dateTimeProviderService,
 			IOptions<ExportOptions> options)
 		{
 			_logger = logger;
 			_exportFileService = exportFileService;
+			_dateTimeProviderService = dateTimeProviderService;
 			_options = options.Value;
 		}
 
@@ -35,7 +38,8 @@ namespace Axpo.PowerTrading.Application.Service
 				{
 					retryExportCount++;
 					_logger.LogInformation($"Exporting csv attemp number {retryExportCount} ");
-                    result = await _exportFileService.ExportToCsvAsync(DateTime.UtcNow);
+					var utcNowDateOnly = _dateTimeProviderService.GetUtcDateTimeWithTimeZone(DateTime.UtcNow);
+                    result = await _exportFileService.ExportToCsvAsync(utcNowDateOnly);
                 }
 				
 				await Task.Delay(_options.ExportIntervalInMiliseconds, stoppingToken);
