@@ -9,7 +9,7 @@ namespace Axpo.PowerTrading.Application.Service
         
         public string FormatDateTimePeriodToIso8601(int period, DateTime date)
         {
-            var updatedDate = date.AddHours(period + 1);
+            var updatedDate = date.AddHours(period);
             return updatedDate.ToString("yyyy-MM-ddTHH:mmZ");
         }
         public DateTime GetUtcDateTimeWithTimeZone(DateTime date)
