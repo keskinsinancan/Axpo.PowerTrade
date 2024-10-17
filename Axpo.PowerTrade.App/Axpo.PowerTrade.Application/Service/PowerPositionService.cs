@@ -1,8 +1,6 @@
-﻿using Axpo.PowerTrading.Application.Constants;
-using Axpo.PowerTrading.Application.Models;
+﻿using Axpo.PowerTrading.Application.Models;
 using Axpo.PowerTrading.Application.Service.Interface;
 using Microsoft.Extensions.Logging;
-using System.Text;
 
 namespace Axpo.PowerTrading.Application.Service
 {
