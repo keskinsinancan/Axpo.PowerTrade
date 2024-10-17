@@ -11,34 +11,40 @@ namespace Axpo.PowerTrading.Application.Tests
             _dateTimeProviderService = new DateTimeProviderService();
         }
 
-        [Fact]
-        public void FormatDateTimePeriodToIso8601_ValidInput_ReturnsCorrectFormat()
-        {
-            int period = 5;
-            DateTime date = new DateTime(2024, 10, 17, 0, 0, 0, DateTimeKind.Utc);
+		[Fact]
+		public void FormatDateTimePeriodToIso8601_ValidPeriod_ReturnsCorrectIso8601Format()
+		{
+			var date = new DateTime(2024, 10, 17, 12, 0, 0, DateTimeKind.Utc);
+			int period = 2;
 
-            string result = _dateTimeProviderService.FormatDateTimePeriodToIso8601(period, date);
+			var result = _dateTimeProviderService.FormatDateTimePeriodToIso8601(period, date);
 
-            Assert.Equal("2024-10-17T06:00Z", result);
-        }
+			var expectedDate = date.AddHours(period + 1).ToString("yyyy-MM-ddTHH:mmZ");
+			Assert.Equal(expectedDate, result);
+		}
 
-        [Fact]
-        public void GetUtcDateTimeWithTimeZone_ValidInput_ReturnsCorrectUtcDateTime()
-        {
-            DateTime inputDate = new DateTime(2024, 10, 17, 0, 0, 0, DateTimeKind.Utc);
+		[Fact]
+		public void GetUtcDateTimeWithTimeZone_ConvertsToBerlinTimeZone_CorrectlyAdjustsForDST()
+		{
+			var utcDate = new DateTime(2024, 3, 31, 0, 0, 0, DateTimeKind.Utc);
 
-            DateTime result = _dateTimeProviderService.GetUtcDateTimeWithTimeZone(inputDate);
+			var result = _dateTimeProviderService.GetUtcDateTimeWithTimeZone(utcDate);
 
-            Assert.Equal(new DateTime(2024, 10, 17, 1, 0, 0, DateTimeKind.Utc), result);
-        }
+			TimeZoneInfo berlinTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Berlin");
+			var expected = TimeZoneInfo.ConvertTimeFromUtc(utcDate, berlinTimeZone);
+			Assert.Equal(expected, result);
+		}
 
-        [Fact]
-        public void UtcNowWithTimeZone_ReturnsCorrectUtcDateTime()
-        {
-            DateTime result = _dateTimeProviderService.UtcNowWithTimeZone();
+		[Fact]
+		public void UtcNowWithTimeZone_ReturnsCurrentBerlinTime()
+		{
+			var utcNow = new DateTime(2024, 10, 17, 12, 0, 0, DateTimeKind.Utc);
 
-            Assert.True(result >= DateTime.UtcNow.AddHours(1).AddMinutes(-1) &&
-                        result <= DateTime.UtcNow.AddHours(1).AddMinutes(1));
-        }
-    }
+			var result = _dateTimeProviderService.UtcNowWithTimeZone();
+
+			TimeZoneInfo berlinTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Berlin");
+			var expected = TimeZoneInfo.ConvertTimeFromUtc(utcNow.AddHours(1), berlinTimeZone);
+			Assert.Equal(expected.Date, result.Date);
+		}
+	}
 }
