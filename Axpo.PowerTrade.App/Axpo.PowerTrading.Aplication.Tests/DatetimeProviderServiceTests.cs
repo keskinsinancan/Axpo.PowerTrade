@@ -19,7 +19,7 @@ namespace Axpo.PowerTrading.Application.Tests
 
 			var result = _dateTimeProviderService.FormatDateTimePeriodToIso8601(period, date);
 
-			var expectedDate = date.AddHours(period + 1).ToString("yyyy-MM-ddTHH:mmZ");
+			var expectedDate = date.AddHours(period).ToString("yyyy-MM-ddTHH:mmZ");
 			Assert.Equal(expectedDate, result);
 		}
 
