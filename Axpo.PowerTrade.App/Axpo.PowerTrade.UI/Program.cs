@@ -27,7 +27,8 @@ public class Program
            .ConfigureServices((context, services) =>
            {
                services.Configure<ExportOptions>(context.Configuration.GetSection("ExportOptions"));
-               services.AddSingleton<IExportFileService, ExportFileService>();
+			   services.Configure<DateTimeProviderOptions>(context.Configuration.GetSection("DateTimeProviderOptions"));
+			   services.AddSingleton<IExportFileService, ExportFileService>();
                services.AddSingleton<IPowerPositionService, PowerPositionService>();
                services.AddSingleton<IPowerService, PowerService>();
                services.AddSingleton<IFileService, FileService>();

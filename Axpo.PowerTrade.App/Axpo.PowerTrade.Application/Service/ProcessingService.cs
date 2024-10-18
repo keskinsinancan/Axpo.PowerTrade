@@ -38,7 +38,7 @@ namespace Axpo.PowerTrading.Application.Service
 				{
 					retryExportCount++;
 					_logger.LogInformation($"Exporting csv attemp number {retryExportCount} ");
-					var utcNowDateOnly = _dateTimeProviderService.GetUtcDateTimeWithTimeZone(DateTime.UtcNow);
+					var utcNowDateOnly = _dateTimeProviderService.GetUtcDateWithTimeZoneDateOnly(DateTime.UtcNow);
                     result = await _exportFileService.ExportToCsvAsync(utcNowDateOnly);
                 }
 				

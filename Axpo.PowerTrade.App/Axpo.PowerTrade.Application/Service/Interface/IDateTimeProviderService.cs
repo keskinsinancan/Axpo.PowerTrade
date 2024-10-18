@@ -4,6 +4,6 @@
     {
         DateTime UtcNowWithTimeZone();
         string FormatDateTimePeriodToIso8601(int period, DateTime date);
-        DateTime GetUtcDateTimeWithTimeZone(DateTime date);
+        DateTime GetUtcDateWithTimeZoneDateOnly(DateTime date);
     }
 }
